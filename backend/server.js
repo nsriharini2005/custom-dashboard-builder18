@@ -14,24 +14,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/halleyx_d
 })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB error:', err));
-// Auto-seed sample data
-async function seedData() {
-  const count = await Order.countDocuments();
-  if (count === 0) {
-    await Order.insertMany([
-      { firstName:'John', lastName:'Doe', email:'john@email.com', phone:'9876543210', street:'123 Main St', city:'Chennai', state:'TN', postalCode:'600001', country:'India', product:'Laptop Pro X1', quantity:2, unitPrice:75000, totalAmount:150000, status:'Delivered', createdBy:'Admin', createdAt: new Date('2026-01-15') },
-      { firstName:'Priya', lastName:'Kumar', email:'priya@email.com', phone:'9876543211', street:'456 Park Ave', city:'Mumbai', state:'MH', postalCode:'400001', country:'India', product:'Smart Watch Series 5', quantity:3, unitPrice:15000, totalAmount:45000, status:'Shipped', createdBy:'Sales Team', createdAt: new Date('2026-01-20') },
-      { firstName:'Raj', lastName:'Singh', email:'raj@email.com', phone:'9876543212', street:'789 Oak Rd', city:'Delhi', state:'DL', postalCode:'110001', country:'India', product:'Wireless Headphones', quantity:5, unitPrice:5000, totalAmount:25000, status:'Processing', createdBy:'Admin', createdAt: new Date('2026-02-05') },
-      { firstName:'Anita', lastName:'Sharma', email:'anita@email.com', phone:'9876543213', street:'321 Lake Dr', city:'Bangalore', state:'KA', postalCode:'560001', country:'India', product:'4K Monitor', quantity:1, unitPrice:35000, totalAmount:35000, status:'Pending', createdBy:'Manager', createdAt: new Date('2026-02-10') },
-      { firstName:'Vikram', lastName:'Patel', email:'vikram@email.com', phone:'9876543214', street:'654 Hill St', city:'Hyderabad', state:'TS', postalCode:'500001', country:'India', product:'Gaming Mouse', quantity:4, unitPrice:3000, totalAmount:12000, status:'Delivered', createdBy:'Sales Team', createdAt: new Date('2026-02-20') },
-      { firstName:'Meera', lastName:'Nair', email:'meera@email.com', phone:'9876543215', street:'987 River Rd', city:'Pune', state:'MH', postalCode:'411001', country:'India', product:'Mechanical Keyboard', quantity:2, unitPrice:8000, totalAmount:16000, status:'Cancelled', createdBy:'Admin', createdAt: new Date('2026-03-01') },
-      { firstName:'Arjun', lastName:'Reddy', email:'arjun@email.com', phone:'9876543216', street:'147 Palm Ave', city:'Chennai', state:'TN', postalCode:'600002', country:'India', product:'Portable SSD 1TB', quantity:3, unitPrice:7000, totalAmount:21000, status:'Delivered', createdBy:'Manager', createdAt: new Date('2026-03-10') },
-      { firstName:'Kavya', lastName:'Menon', email:'kavya@email.com', phone:'9876543217', street:'258 Rose St', city:'Kochi', state:'KL', postalCode:'682001', country:'India', product:'USB-C Hub', quantity:6, unitPrice:2000, totalAmount:12000, status:'Shipped', createdBy:'Sales Team', createdAt: new Date('2026-03-15') }
-    ]);
-    console.log('✅ Sample data seeded!');
-  }
-}
-seedData();
+
 const orderSchema = new mongoose.Schema({
   firstName: String, lastName: String, email: String, phone: String,
   street: String, city: String, state: String, postalCode: String, country: String,
