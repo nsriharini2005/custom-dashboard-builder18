@@ -6,7 +6,7 @@ const path = require('path');
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join('C:\\Users\\SRI HARINI\\OneDrive\\Desktop\\dashboard-builder\\frontend')));
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 mongoose.connect('mongodb://localhost:27017/halleyx_dashboard')
   .then(() => console.log('MongoDB connected'))
@@ -93,7 +93,7 @@ app.post('/api/dashboard', async (req, res) => {
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join('C:\\Users\\SRI HARINI\\OneDrive\\Desktop\\dashboard-builder\\frontend', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 app.listen(3000, () => {
