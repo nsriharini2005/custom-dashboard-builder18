@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Halleyx · Dashboard Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">⬡</div>
+      <span class="brand-name">Halleyx</span>
+    </div>
+    <ul class="nav-links">
+      <li class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+        <span class="nav-icon">◈</span><span class="nav-label">Dashboard</span>
+      </li>
+      <li class="nav-item" data-page="orders" onclick="navigate('orders')">
+        <span class="nav-icon">◉</span><span class="nav-label">Customer Orders</span>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">HX</div>
+        <div class="user-meta"><span class="user-name">Admin</span><span class="user-role">Full Access</span></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HAMBURGER -->
+  <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- MAIN -->
+  <main class="main-content" id="main-content">
+
+    <!-- ══ DASHBOARD PAGE ══ -->
+    <div id="page-dashboard" class="page active">
+      <header class="page-header">
+        <div class="header-left">
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Your metrics at a glance</p>
+        </div>
+        <div class="header-right">
+          <div class="date-filter-bar">
+            <input type="date" id="dateFrom" class="date-input" onchange="applyDateFilter()"/>
+            <span class="date-sep">→</span>
+            <input type="date" id="dateTo" class="date-input" onchange="applyDateFilter()"/>
+            <button class="btn-ghost" onclick="clearDateFilter()">Clear</button>
+          </div>
+          <button class="btn-primary" onclick="navigate('configure')">
+            <span>⊞</span> Configure Dashboard
+          </button>
+        </div>
+      </header>
+      <div id="dashboard-empty" class="empty-state">
+        <div class="empty-icon">◈</div>
+        <h2>No widgets configured</h2>
+        <p>Build your personalized dashboard by adding widgets</p>
+        <button class="btn-primary" onclick="navigate('configure')">⊞ Configure Dashboard</button>
+      </div>
+      <div id="dashboard-grid" class="dashboard-grid" style="display:none"></div>
+    </div>
+
+    <!-- ══ CONFIGURE PAGE ══ -->
+    <div id="page-configure" class="page">
+      <header class="page-header">
+        <div class="header-left">
+          <button class="btn-back" onclick="navigate('dashboard')">← Back</button>
+          <h1 class="page-title">Configure Dashboard</h1>
+        </div>
+        <div class="header-right">
+          <button class="btn-primary" onclick="saveConfiguration()">✓ Save Configuration</button>
+        </div>
+      </header>
+      <div class="configure-layout">
+        <aside class="widget-palette">
+          <h3 class="palette-title">Widget Library</h3>
+          <div class="palette-list" id="palette-list">
+            <div class="palette-item" draggable="true" data-type="kpi" ondragstart="paletteDragStart(event)">
+              <span class="palette-icon">◆</span>
+              <div><strong>KPI Card</strong><small>Key metric</small></div>
+            </div>
+            <div class="palette-item" draggable="true" data-type="bar" ondragstart="paletteDragStart(event)">
+              <span class="palette-icon">▦</span>
+              <div><strong>Bar Chart</strong><small>Compare values</small></div>
+            </div>
+            <div class="palette-item" draggable="true" data-type="line" ondragstart="paletteDragStart(event)">
+              <span class="palette-icon">◟</span>
+              <div><strong>Line Chart</strong><small>Trends over time</small></div>
+            </div>
+            <div class="palette-item" draggable="true" data-type="area" ondragstart="paletteDragStart(event)">
+              <span class="palette-icon">◜</span>
+              <div><strong>Area Chart</strong><small>Volume trends</small></div>
+            </div>
+            <div class="palette-item" draggable="true" data-type="scatter" ondragstart="paletteDragStart(event)">
+              <span class="palette-icon">⋯</span>
+              <div><strong>Scatter Plot</strong><small>Correlation</small></div>
+            </div>
+            <div class="palette-item" draggable="true" data-type="pie" ondragstart="paletteDragStart(event)">
+              <span class="palette-icon">◔</span>
+              <div><strong>Pie Chart</strong><small>Distribution</small></div>
+            </div>
+            <div class="palette-item" draggable="true" data-type="table" ondragstart="paletteDragStart(event)">
+              <span class="palette-icon">▤</span>
+              <div><strong>Data Table</strong><small>Tabular view</small></div>
+            </div>
+          </div>
+        </aside>
+        <div class="canvas-wrapper">
+          <div class="canvas-header">
+            <span class="canvas-label">Canvas Grid (12 columns)</span>
+            <span class="canvas-hint">Drag widgets from left panel</span>
+          </div>
+          <div class="canvas-grid" id="canvas-grid"
+            ondragover="canvasDragOver(event)"
+            ondrop="canvasDrop(event)"
+            ondragleave="canvasDragLeave(event)">
+            <div class="canvas-placeholder" id="canvas-placeholder">
+              <div class="placeholder-icon">⊞</div>
+              <p>Drop widgets here to build your dashboard</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ORDERS PAGE ══ -->
+    <div id="page-orders" class="page">
+      <header class="page-header">
+        <div class="header-left">
+          <h1 class="page-title">Customer Orders</h1>
+          <p class="page-subtitle" id="orders-count">0 records</p>
+        </div>
+        <div class="header-right">
+          <button class="btn-primary" onclick="openOrderModal(null)">+ Create Order</button>
+        </div>
+      </header>
+      <div class="table-wrapper">
+        <table class="data-table" id="orders-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Customer</th><th>Email</th><th>Product</th>
+              <th>Qty</th><th>Unit Price</th><th>Total</th><th>Status</th>
+              <th>Created By</th><th>Date</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody">
+            <tr><td colspan="11" class="empty-row">No orders yet. Create one!</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══ ORDER MODAL ══ -->
+  <div class="modal-overlay" id="order-modal" onclick="closeOnOverlay(event,'order-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Create Order</h2>
+        <button class="modal-close" onclick="closeModal('order-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="order-id"/>
+        <div class="form-section-title">Customer Information</div>
+        <div class="form-grid">
+          <div class="form-group"><label>First Name *</label><input type="text" id="f-firstName" placeholder="John"/><span class="err"></span></div>
+          <div class="form-group"><label>Last Name *</label><input type="text" id="f-lastName" placeholder="Doe"/><span class="err"></span></div>
+          <div class="form-group"><label>Email *</label><input type="email" id="f-email" placeholder="john@email.com"/><span class="err"></span></div>
+          <div class="form-group"><label>Phone *</label><input type="text" id="f-phone" placeholder="+1234567890"/><span class="err"></span></div>
+          <div class="form-group form-full"><label>Street Address *</label><input type="text" id="f-street" placeholder="123 Main St"/><span class="err"></span></div>
+          <div class="form-group"><label>City *</label><input type="text" id="f-city" placeholder="New York"/><span class="err"></span></div>
+          <div class="form-group"><label>State / Province *</label><input type="text" id="f-state" placeholder="NY"/><span class="err"></span></div>
+          <div class="form-group"><label>Postal Code *</label><input type="text" id="f-postalCode" placeholder="10001"/><span class="err"></span></div>
+          <div class="form-group">
+            <label>Country *</label>
+            <select id="f-country">
+              <option value="">Select Country</option>
+              <option>India</option><option>United States</option><option>United Kingdom</option>
+              <option>Canada</option><option>Australia</option><option>Germany</option>
+              <option>France</option><option>Singapore</option><option>UAE</option><option>Other</option>
+            </select><span class="err"></span>
+          </div>
+        </div>
+        <div class="form-section-title">Order Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Product *</label>
+            <select id="f-product" onchange="calcTotal()">
+              <option value="">Choose Product</option>
+              <option>Laptop Pro X1</option><option>Wireless Headphones</option>
+              <option>Smart Watch Series 5</option><option>USB-C Hub</option>
+              <option>Mechanical Keyboard</option><option>4K Monitor</option>
+              <option>Gaming Mouse</option><option>Portable SSD 1TB</option>
+            </select><span class="err"></span>
+          </div>
+          <div class="form-group"><label>Quantity *</label><input type="number" id="f-quantity" placeholder="1" min="1" oninput="calcTotal()"/><span class="err"></span></div>
+          <div class="form-group"><label>Unit Price (₹) *</label><input type="number" id="f-unitPrice" placeholder="0.00" step="0.01" oninput="calcTotal()"/><span class="err"></span></div>
+          <div class="form-group"><label>Total Amount</label><input type="text" id="f-totalAmount" readonly placeholder="Auto calculated" class="readonly-field"/></div>
+          <div class="form-group">
+            <label>Status *</label>
+            <select id="f-status">
+              <option value="">Select Status</option>
+              <option>Pending</option><option>Processing</option>
+              <option>Shipped</option><option>Delivered</option><option>Cancelled</option>
+            </select><span class="err"></span>
+          </div>
+          <div class="form-group">
+            <label>Created By *</label>
+            <select id="f-createdBy">
+              <option value="">Select User</option>
+              <option>Admin</option><option>Sales Team</option>
+              <option>Support Team</option><option>Manager</option>
+            </select><span class="err"></span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('order-modal')">Cancel</button>
+        <button class="btn-primary" onclick="submitOrder()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ WIDGET SETTINGS PANEL ══ -->
+  <div class="side-panel-overlay" id="settings-overlay" onclick="closeSettings()"></div>
+  <div class="side-panel" id="settings-panel">
+    <div class="panel-header">
+      <h3 id="panel-title">Widget Settings</h3>
+      <button onclick="closeSettings()">✕</button>
+    </div>
+    <div class="panel-body" id="panel-body"></div>
+    <div class="panel-footer">
+      <button class="btn-ghost" onclick="closeSettings()">Cancel</button>
+      <button class="btn-primary" onclick="saveWidgetSettings()">Apply</button>
+    </div>
+  </div>
+
+  <!-- ══ CONFIRM MODAL ══ -->
+  <div class="modal-overlay" id="confirm-modal" onclick="closeOnOverlay(event,'confirm-modal')">
+    <div class="modal modal-sm">
+      <div class="modal-header"><h2>Confirm Delete</h2></div>
+      <div class="modal-body"><p id="confirm-msg">Are you sure you want to delete this?</p></div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
+        <button class="btn-danger" id="confirm-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
