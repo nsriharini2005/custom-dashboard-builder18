@@ -8,7 +8,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-mongoose.connect('mongodb://localhost:27017/halleyx_dashboard')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/halleyx_dashboard', {
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
+})
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB error:', err));
 // Auto-seed sample data
